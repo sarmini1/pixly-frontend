@@ -9,6 +9,12 @@ import EditablePhoto from './EditablePhoto';
 
 /** Routes component
  * 
+ * Props:
+ * - photos: array of photo objects [{id, description, image_url, ...}]
+ * - addPhoto: function for sending photo to cloud via ajax 
+ * 
+ * State:
+ * - none
  * 
  * App --> Routes --> Home, NewPhotoForm
  */
@@ -18,7 +24,7 @@ function Routes({ photos, addPhoto }) {
   return (
     <Switch>
       <Route exact path="/">
-        <Home photos={photos} test="hello" />
+        <Home photos={photos} />
       </Route>
       <Route exact path="/upload">
         <NewPhotoForm addPhoto={addPhoto} />
@@ -32,5 +38,3 @@ function Routes({ photos, addPhoto }) {
 }
 
 export default Routes;
-
-//<EditPhotoForm editPhoto={editPhoto}/>

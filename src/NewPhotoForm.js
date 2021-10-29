@@ -1,32 +1,39 @@
 import React, { useState } from "react";
 import { Redirect } from 'react-router-dom';
-import axios from "axios";
 //import piexif from "piexifjs";
 
-/**
+/** New Photo Form
  * 
+ * Props:
+ * - addPhoto: function to add a new photo to cloud
  * 
+ * State:
+ * - selectedPhoto: null or file
+ * - photoTitle: string
+ * - uploadComplete: boolean
  * 
- * 
+ * Routes --> NewPhotoForm
  */
-function NewPhotoForm({addPhoto}) {
+function NewPhotoForm({ addPhoto }) {
 
   //const [name, setName] = useState("test");
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  // TODO consider changing photoTitle state to formData, holding more text fields
   const [photoTitle, setPhotoTitle] = useState("");
   const [uploadComplete, setUploadCompleted] = useState(false);
   console.log("NewPhotoForm selectedPhoto --->", selectedPhoto);
 
 
   function handleChange(evt) {
+
     const { name, value } = evt.target;
+
     if (name === "photoTitle") {
       setPhotoTitle(curr => value);
     } else {
       const photoFile = evt.target.files[0];
       setSelectedPhoto(photoFile);
     }
-
   }
 
   async function handleSubmit(evt) {
@@ -35,7 +42,7 @@ function NewPhotoForm({addPhoto}) {
     const data = new FormData();
     console.log("selectedphoto in submit is", selectedPhoto);
     data.append('selectedPhoto', selectedPhoto);
-    data.append('photoTitle', photoTitle);
+    //data.append('photoTitle', photoTitle);
     console.log("data in submit is", data.get('selectedPhoto'));
 
     try {
@@ -48,8 +55,8 @@ function NewPhotoForm({addPhoto}) {
     }
   }
 
-  if (uploadComplete){
-    return <Redirect to="/"/>
+  if (uploadComplete) {
+    return <Redirect to="/" />
   }
 
   return (

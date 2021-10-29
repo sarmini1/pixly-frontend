@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 
 /** EditablePhoto
@@ -7,7 +7,7 @@ import axios from "axios";
  * Props: none for now
  * 
  * State:
- * - photo: {id, image_url, ...}
+ * - photo: individual photo object {id, image_url, ...}
  * 
  * App --> Routes --> EditablePhoto
  */
@@ -17,6 +17,7 @@ function EditablePhoto() {
 
   const [photo, setPhoto] = useState(null);
 
+ //TODO consider moving ajax calls to app and pass down as props?
   useEffect(function loadPhotoInfo() {
 
     async function fetchPhotoInfo() {

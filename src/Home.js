@@ -3,16 +3,16 @@ import Photo from "./Photo";
 
 /** Home
  * 
- * Props: none for now
+ * Props:
+ * - photos: array of photo objects [{id, description, image_url, ...}]
  * 
  * State: none
  * 
- * App --> Routes --> Home
+ * Routes --> Home --> Photo
  */
-function Home({ photos, test }) {
+function Home({ photos }) {
 
   console.log("Home component rendered, photos are", photos);
-  console.log("Home component rendered, test prop is", test);
 
   return (
     <div>
@@ -21,7 +21,7 @@ function Home({ photos, test }) {
       {photos.map(photo => <Photo
         id={photo.id}
         key={photo.id}
-        image_url={photo.image_url}
+        imageUrl={photo.image_url}
       ></Photo>)}
     </div>
   )

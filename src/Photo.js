@@ -2,21 +2,23 @@ import { Link } from "react-router-dom";
 
 /** Photo
  * 
- * Props: none for now
+ * Props:
+ * - id: integer
+ * - imageUrl: string
  * 
  * State: none
  * 
- * App --> Routes --> Home
+ * Home --> Photo
  */
-function Photo({id, image_url}) {
+function Photo({ id, imageUrl }) {
 
   //console.log("Photo component rendered, id is", id );
 
   return (
     <div>
       <h2>{id}</h2>
-      <img src={image_url} alt={image_url}/>
-      <br/>
+      <img src={imageUrl} alt={imageUrl} />
+      <br />
       <Link to={`/edit/${id}`}>Edit photo!</Link>
     </div>
   )
