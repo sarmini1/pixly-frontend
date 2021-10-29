@@ -1,34 +1,66 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import { BrowserRouter } from "react-router-dom";
 import './App.css';
 import "axios";
 import EXIF from "exif-js";
-import NewPhotoForm from "./NewPhotoForm";
+import Routes from "./Routes";
+import axios from "axios";
+// import NewPhotoForm from "./NewPhotoForm";
+//import NavBar from "./NavBar";
+
 
 function App() {
 
-  //isLoading state
-  //list of photos state
+  const [needsPhotos, setNeedsPhotos] = useState(true);
+  const [photos, setPhotos] = useState(null);
+  const [debug, setDebug] = useState(Math.random())
 
-  function extractEXIFInfo(selectedPhoto) {
-    //utilizes exif js library and returns
-    //an object of information
-    const photoData = EXIF.getData(selectedPhoto);
-    console.log(photoData);
+  console.log("App component rendered, photos are", photos);
+  console.log("App component rendered, loading state is", needsPhotos);
+  console.log("App component debug", debug);
 
+  useEffect(function loadPhotoInfo() {
+
+    async function fetchPhotoInfo() {
+      console.log("fetchphoto in useeffect running");
+      try {
+        let response = await axios({
+          method: 'get',
+          url: 'http://localhost:5000/photos'
+        });
+        console.log("useEffect response is", response.data);
+        setPhotos(curr => response.data);
+        setNeedsPhotos(false);
+        //setNeedsPhotos(false);
+      } catch (err) {
+        console.error("App fetchPhotoInfo error", err);
+        setNeedsPhotos(true);
+      }
+    }
+    //setNeedsPhotos(true);
+    fetchPhotoInfo();
+  }, []);
+
+  async function addPhoto(photoData){
+    let response = await axios.post(
+      'http://localhost:5000/new',
+      photoData);
+    setPhotos(currPhotos => [response.data, ...currPhotos]);
   }
 
-  async function uploadPhoto(selectedPhoto) {
-    //uploads image to AWS
+  if (needsPhotos){
+    return <h1>Loading</h1>;
   }
 
-  async function addPhoto(NewPhotoFormData) {
-    //makes axios POST request to /photos endpoint
-    //with NewPhotoFormData passed in
-  }
+  console.log("ACTUAL CONTENT RENDERED, PHOTOS ARE", photos);
 
   return (
     <div className="App">
-      <NewPhotoForm extractEXIFInfo={extractEXIFInfo} addPhoto={addPhoto} uploadPhoto={uploadPhoto} />
+      <BrowserRouter>
+        <div className="container">
+          <Routes photos={photos} addPhoto={addPhoto}/>
+        </div>
+      </BrowserRouter>
     </div>
   );
 }

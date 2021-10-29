@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import piexif from "piexifjs";
+import { Redirect } from 'react-router-dom';
+import axios from "axios";
+//import piexif from "piexifjs";
 
 /**
  * 
@@ -7,40 +9,73 @@ import piexif from "piexifjs";
  * 
  * 
  */
-function NewPhotoForm({ extractEXIFInfo, addPhoto, uploadPhoto }) {
+function NewPhotoForm({addPhoto}) {
 
+  //const [name, setName] = useState("test");
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [photoTitle, setPhotoTitle] = useState("");
+  const [uploadComplete, setUploadCompleted] = useState(false);
   console.log("NewPhotoForm selectedPhoto --->", selectedPhoto);
 
 
   function handleChange(evt) {
-    const photoFile = evt.target.files[0];
-    setSelectedPhoto(photoFile);
+    const { name, value } = evt.target;
+    if (name === "photoTitle") {
+      setPhotoTitle(curr => value);
+    } else {
+      const photoFile = evt.target.files[0];
+      setSelectedPhoto(photoFile);
+    }
+
   }
 
   async function handleSubmit(evt) {
-
     evt.preventDefault();
-    var reader = new FileReader();
-    reader.onloadend = async function (e) {
-      const res = await fetch(e.target.result)
-      const blob = await res.blob()
-      debugger;
-      var exifObj = piexif.load(blob);
-      debugger;
-      for (var ifd in exifObj) {
-        if (ifd == "thumbnail") {
-          continue;
-        }
-        console.log("-" + ifd);
-        console.log("What is exifObj", exifObj);
-        for (var tag in exifObj[ifd]) {
-          console.log("  " + piexif.TAGS[ifd][tag]["name"] + ":" + exifObj[ifd][tag]);
-        }
-      }
-    };
-    reader.readAsDataURL(selectedPhoto);
+
+    const data = new FormData();
+    console.log("selectedphoto in submit is", selectedPhoto);
+    data.append('selectedPhoto', selectedPhoto);
+    data.append('photoTitle', photoTitle);
+    console.log("data in submit is", data.get('selectedPhoto'));
+
+    try {
+      await addPhoto(data)
+      setSelectedPhoto(null);
+      setUploadCompleted(true);
+    } catch (err) {
+      console.error("error is", err);
+      setUploadCompleted(false);
+    }
   }
+
+  if (uploadComplete){
+    return <Redirect to="/"/>
+  }
+
+  return (
+
+    <div>
+      <form method="POST" onSubmit={handleSubmit} encType="multipart/form-data">
+        <input
+          type="text"
+          name="photoTitle"
+          value={photoTitle}
+          onChange={handleChange}>
+        </input>
+        <input
+          type="file"
+          onChange={handleChange}>
+        </input>
+        <button>
+          Submit photo!
+        </button>
+      </form>
+    </div>
+  );
+
+}
+
+export default NewPhotoForm;
 
 
 
@@ -59,21 +94,3 @@ function NewPhotoForm({ extractEXIFInfo, addPhoto, uploadPhoto }) {
 
 
   // }
-
-  return (
-
-    <div>
-      <form>
-        <input type="file" onChange={handleChange}>
-        </input>
-        <button onClick={handleSubmit}>
-          Submit photo!
-        </button>
-      </form>
-    </div>
-
-  )
-
-}
-
-export default NewPhotoForm;
